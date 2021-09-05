@@ -1,9 +1,8 @@
 Install
 run: npm install --save react-router-dom
-refer:- https://blog.pshrmn.com/simple-react-router-v4-tutorial/
 # The Router
 
-- For browser based projects, there are <BrowserRouter> and <HashRouter> components. The <BrowserRouter> should be used when you have a server that will handle dynamic requests (knows how to respond to any possible URI), while the <HashRouter> should be used for static websites (where the server can only respond to requests for files that it knows about).
+- For browser based projects, there are < BrowserRouter > and < HashRouter > components. The <BrowserRouter> should be used when you have a server that will handle dynamic requests (knows how to respond to any possible URI), while the < HashRouter > should be used for static websites (where the server can only respond to requests for files that it knows about).
 
 # History
 
@@ -12,19 +11,19 @@ refer:- https://blog.pshrmn.com/simple-react-router-v4-tutorial/
 # Rendering a Router
 
 - Router components only expect to receive a single child element.
-- To work within this limitation, it is useful to create an <App> component that renders the rest of your application. Separating your application from the router is also useful for server rendering because you can re-use the <App> on the server while switching the router to a <MemoryRouter>.
+- To work within this limitation, it is useful to create an < App > component that renders the rest of your application. Separating your application from the router is also useful for server rendering because you can re-use the < App > on the server while switching the router to a < MemoryRouter >.
 
 [ Note: <MemoryRouter>
-A <Router> that keeps the history of your “URL” in memory (does not read or write to the address bar). Useful in tests and non-browser environments ]
+A < Router > that keeps the history of your “URL” in memory (does not read or write to the address bar). Useful in tests and non-browser environments ]
 
 ---
 
 import { BrowserRouter } from 'react-router-dom';
 
 ReactDOM.render((
-<BrowserRouter>
-<App />
-</BrowserRouter>
+< BrowserRouter >
+< App / >
+</ BrowserRouter >
 ), document.getElementById('root'));
 
 ---
@@ -38,10 +37,10 @@ Our application is defined within the <App> component. To simplify things, we wi
 function App() {
 return (
 
-<div>
-<Header />
-<Main />
-</div>
+< div >
+< Header />
+< Main />
+< /div>
 );
 }
 ---
@@ -250,3 +249,4 @@ NOTES:-
 - There is work being done to add support for relative <Route>s and <Link>s. Relative <Link>s are more complicated than they might initially seem to be because they should be resolved using their parent match object, not the current URL.
 - The <Route> and <Switch> components can both take a location prop. This allows them to be matched using a location that is different than the actual location (the current URL).
 - They are also passed a staticContext prop, but that is only useful when doing server side rendering.
+  refer:- https://blog.pshrmn.com/simple-react-router-v4-tutorial/
