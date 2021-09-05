@@ -9,7 +9,7 @@ refer:- https://blog.pshrmn.com/simple-react-router-v4-tutorial/
 
 - Each router creates a history object, which it uses to keep track of the current location 1 and re-render the website whenever that changes. The other components provided by React Router rely on having that history object available through React’s context, so they must be rendered as descendants of a router component.
 
-# Rendering a <Router>
+# Rendering a Router
 
 - Router components only expect to receive a single child element.
 - To work within this limitation, it is useful to create an <App> component that renders the rest of your application. Separating your application from the router is also useful for server rendering because you can re-use the <App> on the server while switching the router to a <MemoryRouter>.
@@ -29,7 +29,7 @@ ReactDOM.render((
 
 ---
 
-# The <App>
+# The App
 
 Our application is defined within the <App> component. To simplify things, we will split our application into two parts. The <Header> component will contain links to navigate throughout the website. The <Main> component is where the rest of the content will be rendered.
 
@@ -54,7 +54,7 @@ return (
 
 Path
 
-A <Route> expects a path prop, which is a string that describes the pathname that the route matches — for example, <Route path='/roster'/> should match a pathname that begins with /roster .
+A < Route > expects a path prop, which is a string that describes the pathname that the route matches — for example, <Route path='/roster'/> should match a pathname that begins with /roster .
 When the current location’s pathname is matched by the path, the route will render a React element
 
 Matching paths
@@ -82,7 +82,7 @@ When the route’s path matches, a match object with the following properties wi
 </Switch>
 ---
 
-## What does the <Route> render?
+### What does the < Route > render?
 
 - Routes have three props that can be used to define what should be rendered when the route’s path matches.
 - Only one should be provided to a <Route> element.
