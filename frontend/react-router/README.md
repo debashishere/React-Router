@@ -1,70 +1,252 @@
-# Getting Started with Create React App
+Install
+run: npm install --save react-router-dom
+refer:- https://blog.pshrmn.com/simple-react-router-v4-tutorial/
+# The Router
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- For browser based projects, there are <BrowserRouter> and <HashRouter> components. The <BrowserRouter> should be used when you have a server that will handle dynamic requests (knows how to respond to any possible URI), while the <HashRouter> should be used for static websites (where the server can only respond to requests for files that it knows about).
 
-## Available Scripts
+# History
 
-In the project directory, you can run:
+- Each router creates a history object, which it uses to keep track of the current location 1 and re-render the website whenever that changes. The other components provided by React Router rely on having that history object available through React’s context, so they must be rendered as descendants of a router component.
 
-### `npm start`
+# Rendering a <Router>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Router components only expect to receive a single child element.
+- To work within this limitation, it is useful to create an <App> component that renders the rest of your application. Separating your application from the router is also useful for server rendering because you can re-use the <App> on the server while switching the router to a <MemoryRouter>.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+[ Note: <MemoryRouter>
+A <Router> that keeps the history of your “URL” in memory (does not read or write to the address bar). Useful in tests and non-browser environments ]
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+import { BrowserRouter } from 'react-router-dom';
 
-### `npm run build`
+ReactDOM.render((
+<BrowserRouter>
+<App />
+</BrowserRouter>
+), document.getElementById('root'));
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# The <App>
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Our application is defined within the <App> component. To simplify things, we will split our application into two parts. The <Header> component will contain links to navigate throughout the website. The <Main> component is where the rest of the content will be rendered.
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+function App() {
+return (
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+<div>
+<Header />
+<Main />
+</div>
+);
+}
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+# Routes
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- Main building block of React Router.
+- Use to render content based on the location’s pathname, you should use a <Route> element.
+- React Router only cares about the pathname of a location.
 
-## Learn More
+Path
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+A <Route> expects a path prop, which is a string that describes the pathname that the route matches — for example, <Route path='/roster'/> should match a pathname that begins with /roster .
+When the current location’s pathname is matched by the path, the route will render a React element
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Matching paths
 
-### Code Splitting
+React Router uses the path-to-regexp package to determine if a route element’s path prop matches the current location. It compiles the path string into a regular expression, which will be matched against the location’s pathname.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+When the route’s path matches, a match object with the following properties will be created:
 
-### Analyzing the Bundle Size
+"url" -> the matched part of the current location’s pathname path the route's path
+"isExact" -> path === pathname
+"params" -> an object containing values from the pathname that were captured by path-to-regexp
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+# Creating routes
 
-### Making a Progressive Web App
+- <Route>s can be created anywhere inside of the router.
+- <Switch> component can be usd to group <Route>s. The <Switch> will iterate over its children elements (the routes) and only render the first one that matches the current pathname.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+<Switch>
+  <Route exact path='/' component={Home}/>
+  {/* both /roster and /roster/:number begin with /roster */}
+  <Route path='/roster' component={Roster}/>
+  <Route path='/schedule' component={Schedule}/>
+</Switch>
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## What does the <Route> render?
 
-### Deployment
+- Routes have three props that can be used to define what should be rendered when the route’s path matches.
+- Only one should be provided to a <Route> element.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+1. component — A React component. When a route with a component prop matches, the route will return a new element whose type is the provided React component (created using React.createElement).
 
-### `npm run build` fails to minify
+2. render — A function that returns a React element. It will be called when the path matches. This is similar to component, but is useful for inline rendering and passing extra props to the element.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+3. children — A function that returns a React element. Unlike the prior two props, this will always be rendered, regardless of whether the route’s path matches the current location.
+
+---
+
+<Route path='/page' component={Page} />
+const extraProps = { color: 'red' }
+<Route path='/page' render={(props) => (
+  <Page {...props} data={extraProps}/>
+)}/>
+<Route path='/page' children={(props) => (
+  props.match
+    ? <Page {...props}/>
+    : <EmptyPage {...props}/>
+)}/>
+---
+
+- Typically, either the component or render prop should be used. The children prop can be useful occasionally, but typically it is preferable to render nothing when the path does not match.
+- The element rendered by the <Route> will be passed a number of props. These will be the match object, the current location object 6, and the history object (the one created by our router)
+
+# <Main>
+
+- we will render our <Switch> and <Route>s inside of our <Main> component, which will place the HTML generated by a matched route inside of a <main> DOM node.
+
+---
+
+import { Switch, Route } from 'react-router-dom'
+function Main() {
+return (
+
+<main>
+<Switch>
+<Route exact path='/' component={Home}/>
+<Route path='/roster' component={Roster}/>
+<Route path='/schedule' component={Schedule}/>
+</Switch>
+</main>
+);
+}
+
+---
+
+Note: The route for the homepage includes an exact prop. This is used to state that that route should only match when the pathname matches the route’s path exactly.
+
+## Nested Routes
+
+- The player profile route /roster/:number is not included in the above <Switch>. Instead, it will be rendered by the <Roster> component, which is rendered whenever the pathname begins with /roster.
+
+-> Within the <Roster> component we will render routes for two paths:
+
+- /roster — This should only be matched when the pathname is exactly /roster, so we should also give that route element the exact prop.
+- /roster/:number — This route uses a path param to capture the part of the pathname that comes after /roster.
+
+---
+
+function Roster() {
+return (
+<Switch>
+<Route exact path='/roster' component={FullRoster}/>
+<Route path='/roster/:number' component={Player}/>
+</Switch>
+);
+}
+
+---
+
+- It can be useful to group routes that share a common prefix in the same component.
+
+e.g:- As an example, <Roster> could render a title that would be displayed for all routes whose path begins with /roster.
+
+---
+
+function Roster() {
+return (
+
+<div>
+<h2>This is a roster page!</h2>
+<Switch>
+<Route exact path='/roster' component={FullRoster}/>
+<Route path='/roster/:number' component={Player}/>
+</Switch>
+</div>
+);
+}
+
+---
+
+## Path Params
+
+- Sometimes there are variables within a pathname that we want to capture.
+- The :number part of the path /roster/:number means that the part of the pathname that comes after /roster/ will be captured and stored as match.params.number.
+- For example, the pathname /roster/6 will generate a params object: { number: '6' }
+- NOTE:- The captured value is a string.
+
+-> The <Player> component can use the props.match.params object to determine which player’s data should be rendered.
+
+---
+
+// an API that returns a player object
+import PlayerAPI from './PlayerAPI'
+function Player(props) {
+const player = PlayerAPI.get(
+parseInt(props.match.params.number, 10)
+)
+if (!player) {
+return <div>Sorry, but the player was not found</div>
+}
+return (
+
+<div>
+<h1>{player.name} (#{player.number})</h1>
+<h2>{player.position}</h2>
+</div>
+);
+}
+
+---
+
+## Links
+
+- If we were to create links using anchor elements, clicking on them would cause the whole page to reload.
+- React Router provides a <Link> component to prevent that from happening. When clicking a <Link>, the URL will be updated and the rendered content will change without reloading the page.
+
+---
+
+import { Link } from 'react-router-dom'
+function Header() {
+return (
+
+<header>
+<nav>
+<ul>
+<li><Link to='/'>Home</Link></li>
+<li><Link to='/roster'>Roster</Link></li>
+<li><Link to='/schedule'>Schedule</Link></li>
+</ul>
+</nav>
+</header>
+);
+}
+
+---
+
+- <Link>s use the "to" prop to describe the location that they should navigate to. This can either be a string or a location object (containing a combination of pathname, search, hash, and state properties). When it is a string, it will be converted to a location object.
+
+eg:- <Link to={{ pathname: '/roster/7' }}>Player #7</Link>
+
+NOTES:-
+
+- Locations are objects with properties to describe the different parts of a URL:
+
+  - A basic location object
+    { pathname: '/', search: '', hash: '', key: 'abc123' state: {} }
+
+- You can render a pathless <Route>, which will match every location. This can be useful for accessing methods and variables that are stored in the context.
+- If you use the children prop, the route will render even when its path does not match the current location.
+
+- There is work being done to add support for relative <Route>s and <Link>s. Relative <Link>s are more complicated than they might initially seem to be because they should be resolved using their parent match object, not the current URL.
+- The <Route> and <Switch> components can both take a location prop. This allows them to be matched using a location that is different than the actual location (the current URL).
+- They are also passed a staticContext prop, but that is only useful when doing server side rendering.
